@@ -3,32 +3,6 @@
 ## Visão Geral
 Este repositório contém a documentação do módulo de inteligência artificial da antgravity focado exclusivamente na estimativa e previsão de peso de bovinos, projetado para consumo e integração direta com o banco de dados PostgreSQL.
 
-## Instruções Rápidas de Configuração e Execução
-
-Para garantir que o ambiente local e a integração com o PostgreSQL via Model Context Protocol (MCP) funcionem corretamente, siga os passos abaixo no seu terminal PowerShell:
-
-1.  **Clone o repositório ou navegue até a pasta do projeto:**
-    ```powershell
-    cd C:\Users\ryanv\Sistema-Preditivo-Bovinos
-    ```
-
-2.  **Execute o script de configuração inicial:**
-    Isso criará o usuário _readonly_ no PostgreSQL e testará as conexões básicas:
-    ```powershell
-    .\setup_and_test.ps1
-    ```
-
-3.  **Execute o script de importação de dados:**
-    Popula o banco com os dados estruturados para a IA:
-    ```powershell
-    psql -U postgres -d seu_banco -f import_all_data.sql
-    ```
-
-4.  **Execute a configuração do MCP:**
-    ```powershell
-    psql -U postgres -d seu_banco -f setup_mcp_readonly.sql
-    ```
-
 ## Princípio de Design
 O sistema está centrado no **Motor Biológico (Machine Learning)**, que:
 1. Prevê o peso futuro do animal (ex: 30, 60, 90 dias) e calcula sua faixa de incerteza estatística usando dados tabulares (XGBoost/LightGBM).
