@@ -1,33 +1,41 @@
-Módulo de IA para Pesagem de Bovinos (Integração PostgreSQL) - antgravity 🐂📈
+# Módulo de IA para Pesagem de Bovinos (Integração PostgreSQL) - antgravity
 
-Bem-vindo ao repositório do Módulo de Inteligência Artificial para Pesagem de Bovinos. Este projeto utiliza aprendizado de máquina (Machine Learning) e análise de dados multivariados (clima, suplementação, índices multiespectrais) para prever o ganho de peso de bovinos Nelore, integrando os resultados diretamente em um banco de dados PostgreSQL.
+## Visão Geral
+Este repositório contém a documentação do módulo de inteligência artificial da antgravity focado exclusivamente na estimativa e previsão de peso de bovinos, projetado para consumo e integração direta com o banco de dados PostgreSQL.
 
-📁 Estrutura do Repositório
+## Instruções Rápidas de Configuração e Execução
 
-A estrutura do projeto foi desenhada para separar claramente a ingestão de dados, o processamento, a modelagem preditiva e a integração com o banco de dados.
+Para garantir que o ambiente local e a integração com o PostgreSQL via Model Context Protocol (MCP) funcionem corretamente, siga os passos abaixo no seu terminal PowerShell:
 
-1. Raiz do Projeto (Configuração e Banco de Dados)
+1.  **Clone o repositório ou navegue até a pasta do projeto:**
+    ```powershell
+    cd C:\Users\ryanv\Sistema-Preditivo-Bovinos
+    ```
 
-setup_and_test.ps1: Script PowerShell principal para inicializar o ambiente, testar dependências e configurar a infraestrutura local.
+2.  **Execute o script de configuração inicial:**
+    Isso criará o usuário _readonly_ no PostgreSQL e testará as conexões básicas:
+    ```powershell
+    .\setup_and_test.ps1
+    ```
 
-setup_mcp_readonly.sql / import_all_data.sql: Scripts SQL responsáveis por preparar as tabelas no PostgreSQL, importar os dados tabulares brutos e configurar as permissões seguras (modo leitura) para que ferramentas de IA consumam as informações.
+3.  **Execute o script de importação de dados:**
+    Popula o banco com os dados estruturados para a IA:
+    ```powershell
+    psql -U postgres -d seu_banco -f import_all_data.sql
+    ```
 
-mcp_config.json / .agents/ / .vscode/: Arquivos de configuração do Model Context Protocol (MCP), que definem como os agentes de IA interagem com o banco de dados e o ambiente de desenvolvimento.
+4.  **Execute a configuração do MCP:**
+    ```powershell
+    psql -U postgres -d seu_banco -f setup_mcp_readonly.sql
+    ```
 
-2. Diretório data/ (Pipeline de Dados)
+## Princípio de Design
+O sistema está centrado no **Motor Biológico (Machine Learning)**, que:
+1. Prevê o peso futuro do animal (ex: 30, 60, 90 dias) e calcula sua faixa de incerteza estatística usando dados tabulares (XGBoost/LightGBM).
+2. Alimenta diretamente as tabelas no PostgreSQL (configurado através dos scripts `import_all_data.sql` e `setup_mcp_readonly.sql`), facilitando o consumo por outras camadas, APIs, ou por um servidor Model Context Protocol (MCP) configurado localmente via `mcp_config.json`.
 
-O coração do sistema de informações de pesagem e variáveis ambientais.
-
-raw/ (Dados Brutos): Contém o dataset base com histórico de pesagem, suplementação e condições climáticas.
-
-src/: Scripts e notebooks auxiliares de coleta (ex: collect_weather_data.ipynb e get_image_data.ipynb) que extraem e consolidam variáveis no .cache.sqlite antes de compor o dataset tabular.
-
-processed/ (Dados Prontos para ML):
-
-treino.csv, validacao.csv, teste.csv: Divisões do dataset respeitando a unidade animal-tempo para evitar vazamento de dados (Target Leakage) durante o treinamento da IA.
-
-3. Diretório notebooks/ (Modelagem Preditiva)
-
-Bovino.ipynb: O motor principal de IA. Consome os dados processados, treina algoritmos preditivos baseados em árvores (ex: XGBoost/LightGBM), extrai os fatores de explicabilidade (SHAP) e gera as projeções de peso futuro com seus respectivos quantis de incerteza (P10 a P90).
-
-Untitled.ipynb: Notebook auxiliar para análises exploratórias.
+## Estrutura da Documentação
+- `models/MODEL_CARD.md`: Especificações técnicas, limitações e explicabilidade do modelo de IA preditivo.
+- `data/DATA_DICTIONARY.md`: Esquema de dados, variáveis temporais e prevenção de vazamento de dados.
+- `architecture/SYSTEM_DESIGN.md`: Arquitetura do fluxo de ingestão e integração entre o modelo de IA e o banco PostgreSQL.
+- `experiments/EVALUATION_PROTOCOL.md`: Protocolo de validação, baselines e métricas de sucesso do modelo zootécnico.
